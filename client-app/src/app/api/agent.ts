@@ -7,6 +7,7 @@ import { IUser, IUserFormValues } from '../models/user';
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
 axios.interceptors.request.use((config) => {
+    // send token with every request
     const token = window.localStorage.getItem('jwt');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -18,7 +19,8 @@ axios.interceptors.request.use((config) => {
 
 axios.interceptors.response.use(undefined, error => {
     
-    if (error.message === 'Network Error'  && !error.response) {
+    // catch some server errors
+    if (error.message === 'Network Error' && !error.response) {
         toast.error('Network error - make sure API works');
     }
 
