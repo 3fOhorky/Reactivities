@@ -26,7 +26,7 @@ export default class UserStore {
             this.rootStore.modalStore.closeModal();
             history.push('/activities');
         } catch (error) {
-            // throw error to catch it in or form (form validation)
+            // throw error to catch it in our form (form validation)
             throw error;
         }
     }
@@ -41,7 +41,7 @@ export default class UserStore {
             this.rootStore.modalStore.closeModal();
             history.push('/activities');
         } catch (error) {
-            // throw error to catch it in or form (form validation)
+            // throw error to catch it in our form (form validation)
             throw error;
         }
     }
