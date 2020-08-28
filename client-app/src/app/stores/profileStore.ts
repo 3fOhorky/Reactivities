@@ -32,10 +32,29 @@ export default class ProfileStore {
         this.profile = profile;
       });
     } catch (error) {
-      console.log(error);
+      throw error;
     } finally {
       runInAction(() => {
         this.loadingProfile = false;
+      });
+    }
+  };
+
+  @action updateProfile = async (profile: Partial<IProfile>) => {
+    this.loading = true;
+    try {
+      await agent.Profiles.update(profile);
+      runInAction(() => {
+        if (this.profile) {
+          this.rootStore.userStore.user!.displayName = profile.displayName!;
+          this.profile = { ...this.profile, ...profile}
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      runInAction(() => {
+        this.loading = false;
       });
     }
   };
