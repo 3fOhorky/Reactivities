@@ -80,8 +80,12 @@ const Profiles = {
     uploadPhoto: (photo: Blob): Promise<IPhoto> =>  requests.postForm(`/photos`, photo),
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setmain`, {}),
     deletePhoto: (id: string) => requests.del(`/photos/${id}`),
-    update: (profile: Partial<IProfile>) => requests.put("/profiles", profile) // Partial<Type> constructs a type with all properties of Type set to optional
+    update: (profile: Partial<IProfile>) => requests.put("/profiles", profile), // Partial<Type> constructs a type with all properties of Type set to optional
+    follow: (username: string) => requests.post(`/profiles/${username}/follow`, {}),
+    unfollow: (username: string) => requests.del(`/profiles/${username}/follow`),
+    listFollowings: (username: string, predicate: string): Promise<IProfile[]> => requests.get(`/profiles/${username}/follow?predicate=${predicate}`)
 }
+
 
 export default {
     Activities, 

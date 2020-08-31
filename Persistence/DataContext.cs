@@ -16,6 +16,8 @@ namespace Persistence
         public DbSet<UserActivity> UserActivities { get; set; }
         public DbSet<Photo> Photos { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<UserFollowing> Followings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -34,6 +36,11 @@ namespace Persistence
             // UserActivities je vezna tablica many to many relacije između Activities i AppUser tablica
             modelBuilder.Entity<UserActivity>().HasOne(u => u.AppUser).WithMany(a => a.UserActivities).HasForeignKey(u => u.AppUserID);
             modelBuilder.Entity<UserActivity>().HasOne(a => a.Activity).WithMany(u => u.UserActivities).HasForeignKey(a => a.AcitivityId);
+
+            // Followings je self referencing many to many vezna tablica
+            modelBuilder.Entity<UserFollowing>(x => x.HasKey(uf => new { uf.TargetId, uf.ObserverId }));
+            modelBuilder.Entity<UserFollowing>().HasOne(u => u.Observer).WithMany(a => a.Followings).HasForeignKey(u => u.ObserverId);
+            modelBuilder.Entity<UserFollowing>().HasOne(u => u.Target).WithMany(a => a.Followers).HasForeignKey(u => u.TargetId);
         }
     }
 }

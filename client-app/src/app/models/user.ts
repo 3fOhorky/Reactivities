@@ -11,3 +11,8 @@ export interface IUserFormValues {
     displayName?: string;
     username?: string;
 }
+
+export interface IUserFollowing {
+    target: IUser;
+    observer: IUser;
+}
