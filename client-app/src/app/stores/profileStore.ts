@@ -40,6 +40,7 @@ export default class ProfileStore {
     }
   };
 
+  // Partial<Type> constructs a type with all properties of Type set to optional
   @action updateProfile = async (profile: Partial<IProfile>) => {
     this.loading = true;
     try {
