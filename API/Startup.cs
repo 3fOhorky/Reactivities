@@ -43,19 +43,39 @@ namespace API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
+        public void ConfigureDevelopmentServices(IServiceCollection services) {
             services.AddDbContext<DataContext>(opt =>
             {
                 opt.UseLazyLoadingProxies();
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            ConfigureServices(services);
+        }
+        
+        public void ConfigureProductionServices(IServiceCollection services) {
+            services.AddDbContext<DataContext>(opt =>
+            {
+                opt.UseLazyLoadingProxies();
+                opt.UseMySql(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            ConfigureServices(services);
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            // services.AddDbContext<DataContext>(opt =>
+            // {
+            //     opt.UseLazyLoadingProxies();
+            //     opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+            // });
+
             services.AddCors(opt =>
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials();
+                    policy.AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("WWW-Authenticate").WithOrigins("http://localhost:3000").AllowCredentials();
                 });
             });
 
@@ -95,7 +115,9 @@ namespace API
                             ValidateIssuerSigningKey = true,
                             IssuerSigningKey = key,
                             ValidateAudience = false,
-                            ValidateIssuer = false
+                            ValidateIssuer = false,
+                            ValidateLifetime = true,
+                            ClockSkew = TimeSpan.Zero
                         };
                         opt.Events = new JwtBearerEvents
                         {
@@ -130,6 +152,9 @@ namespace API
 
             // app.UseHttpsRedirection();
 
+            app.UseDefaultFiles(); // searches wwwroot folder for any files called index.html or default.html to serve
+            app.UseStaticFiles();  // omogućeno da isti server poslužuje našu api i klijentsku app
+
             app.UseRouting();
             app.UseCors("CorsPolicy");
 
@@ -140,6 +165,7 @@ namespace API
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat"); // svaki request koji dolazi na /chat rutu se redirecta na ChatHub
+                endpoints.MapFallbackToController("Index", "Fallback"); // fallback controller koji vodi na index.html (na našu react app) - isti url vodi na API i client app (nije više razdvojeno na localhost:3000 i localhost:5000)
             });
         }
     }

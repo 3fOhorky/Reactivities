@@ -6,6 +6,7 @@ import { LoginForm } from "../user/LoginForm";
 import { RegisterForm } from "../user/RegisterForm";
 
 export const HomePage = () => {
+  const token = window.localStorage.getItem('jwt');
   const rootStore = useContext(RootStoreContext);
   const { IsLoggedIn, user } = rootStore.userStore;
   const { openModal } = rootStore.modalStore;
@@ -21,7 +22,7 @@ export const HomePage = () => {
           />
           Reactivities
         </Header>
-        {IsLoggedIn && user ? (
+        {token && IsLoggedIn && user ? (
           <Fragment>
             <Header
               as="h2"

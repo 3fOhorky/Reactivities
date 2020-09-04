@@ -1,6 +1,5 @@
 import React, { Fragment, useContext, useEffect } from "react";
 import { Container } from "semantic-ui-react";
-import "semantic-ui-css/semantic.min.css";
 import { observer } from "mobx-react-lite";
 import NavBar from "../../features/nav/NavBar";
 import {
@@ -20,6 +19,7 @@ import { LoadingComponent } from "./LoadingComponent";
 import ModalContainer from "../common/modals/ModalContainer";
 import { RegisterForm } from "../../features/user/RegisterForm";
 import ProfilePage from "../../features/profiles/ProfilePage";
+import PrivateRoute from "./PrivateRoute";
 
 const App: React.FC<RouteComponentProps> = ({ location }) => {
   const rootStore = useContext(RootStoreContext);
@@ -53,15 +53,15 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
                 {" "}
                 {/* switch makes sure that only one of the routes is always shown */}
                 <Route exact path="/" component={HomePage} />
-                <Route exact path="/activities" component={ActivityDashboard} />
-                <Route path="/activities/:id" component={ActivityDetails} />
-                <Route
+                <PrivateRoute exact path="/activities" component={ActivityDashboard} />
+                <PrivateRoute path="/activities/:id" component={ActivityDetails} />
+                <PrivateRoute
                   key={location.key}
                   path={["/createActivity", "/manage/:id"]}
                   component={ActivityForm}
                 />
-                <Route path="/register" component={RegisterForm} />
-                <Route path="/profile/:username" component={ProfilePage} />
+                <PrivateRoute path="/register" component={RegisterForm} />
+                <PrivateRoute path="/profile/:username" component={ProfilePage} />
                 <Route component={NotFound} />
               </Switch>
             </Container>
