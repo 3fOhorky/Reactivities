@@ -32,7 +32,8 @@ namespace Application.Profiles
                 Bio = user.Bio,
                 IsFollowed = currentUser.Followings.Any(x => x.TargetId == user.Id),
                 FollowersCount = user.Followers.Count,
-                FollowingCount = user.Followings.Count
+                FollowingCount = user.Followings.Count,
+                Photos = user.Photos
             };
 
             return profile;

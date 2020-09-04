@@ -14,9 +14,7 @@ export default class ProfileStore {
     reaction(
       () => this.activeTab,
       activeTab => {
-        if (activeTab === 2) { 
-          this.loadUserActivities('default');
-        } else if (activeTab === 3 || activeTab === 4) {
+        if (activeTab === 3 || activeTab === 4) {
           const predicate = activeTab === 3 ? 'followers' : 'following';
           this.loadFollowings(predicate);
         } else {
@@ -206,7 +204,7 @@ export default class ProfileStore {
   @action loadUserActivities = async (username: string, predicate?: string) => {
     this.loading = true;
     try {
-      const userActivities = await agent.Profiles.listUserActivities(username, predicate!)
+      const userActivities = await agent.Profiles.listUserActivities(username, predicate!);
       runInAction(() => {
         this.userActivities = userActivities;
       }) 

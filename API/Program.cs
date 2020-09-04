@@ -14,7 +14,7 @@ namespace API
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-     
+
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -23,7 +23,7 @@ namespace API
                     var context = services.GetRequiredService<DataContext>();
                     var userManager = services.GetRequiredService<UserManager<AppUser>>();
                     context.Database.Migrate();
-                    Seed.SeedData(context, userManager).Wait();     
+                    Seed.SeedData(context, userManager).Wait();
                 }
                 catch (System.Exception)
                 {
@@ -39,7 +39,9 @@ namespace API
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                        .UseKestrel(x => x.AddServerHeader = false) // turns off server http header that notifies which server we are using for our app (secuirty measure)
+                        .UseStartup<Startup>();
                 });
     }
 }

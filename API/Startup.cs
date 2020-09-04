@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using API.Middleware;
 using API.SignalR;
 using Application.Activities;
 using Application.Interfaces;
-using Application.Photos;
 using Application.Profiles;
 using AutoMapper;
 using Domain;
@@ -19,15 +16,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 
@@ -149,6 +143,20 @@ namespace API
             {
                 // app.UseDeveloperExceptionPage();
             }
+
+            app.UseXContentTypeOptions(); // prevents content sniffing (security measure)
+            app.UseReferrerPolicy(opt => opt.NoReferrer()); // restricts amount of info passed on to another site when refering to other site (security measure)
+            app.UseXXssProtection(opt => opt.EnabledWithBlockMode()); // stops pages from loading when reflected XSS detected (security measure)
+            app.UseXfo(opt => opt.Deny()); // blocks iframe and click-jacking attacks
+            app.UseCsp(opt => opt
+                        .BlockAllMixedContent()         // prevents loading any content over http when page uses https
+                        .StyleSources(s => s.Self().CustomSources("https://fonts.googleapis.com", "sha256-F4GpCPyRepgP5znjMD8sc7PEjzet5Eef4r09dEGPpTs="))    // source can only be served by the server itself or custom sources
+                        .FontSources(s => s.Self().CustomSources("https://fonts.gstatic.com", "data:"))
+                        .FormActions(s => s.Self())
+                        .FrameAncestors(s => s.Self())
+                        .ImageSources(s => s.Self().CustomSources("https://res.cloudinary.com", "blob:", "data:"))
+                        .ScriptSources(s => s.Self().CustomSources("sha256-ma5XxS1EBgt17N22Qq31rOxxRWRfzUTQS1KOtfYwuNo="))
+                    ); 
 
             // app.UseHttpsRedirection();
 
